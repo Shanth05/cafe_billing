@@ -13,7 +13,6 @@
                     <p>{{ __("You're logged in!") }}</p>
 
                     @php
-                        // Retrieve the first role name assigned to the authenticated user
                         $role = auth()->user()->getRoleNames()->first();
                     @endphp
 
@@ -22,6 +21,23 @@
                             {{ __("You're logged in as") }}
                             <strong class="text-green-600">{{ ucfirst($role) }}</strong>!
                         </p>
+
+                        @if($role === 'admin')
+                            <p>Welcome Admin! Here you can manage users, settings, and reports.</p>
+                            <!-- Admin dashboard content here -->
+
+                        @elseif($role === 'manager')
+                            <p>Welcome Manager! Here you can monitor sales, manage orders and staff.</p>
+                            <!-- Manager dashboard content here -->
+
+                        @elseif($role === 'cashier')
+                            <p>Welcome Cashier! Here you can process bills and manage daily transactions.</p>
+                            <!-- Cashier dashboard content here -->
+
+                        @else
+                            <p>Your role dashboard is under construction.</p>
+                        @endif
+
                     @else
                         <p class="mt-4 text-red-600">
                             {{ __("You're logged in but no role has been assigned.") }}
