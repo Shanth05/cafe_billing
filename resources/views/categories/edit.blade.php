@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-md mx-auto py-6">
-    <h2 class="text-xl font-bold mb-4">Edit Category</h2>
-    <form method="POST" action="{{ route('categories.update', $category) }}" class="space-y-4">
+<div class="container mt-4">
+    <h2 class="mb-3">Edit Category</h2>
+    <form action="{{ route('categories.update', $category) }}" method="POST">
         @csrf @method('PUT')
-        <div>
-            <label class="block mb-1">Category Name</label>
-            <input type="text" name="name" class="w-full border p-2 rounded" value="{{ old('name', $category->name) }}">
-            @error('name') <p class="text-red-600 text-sm">{{ $message }}</p> @enderror
+        <div class="mb-3">
+            <label class="form-label">Category Name</label>
+            <input type="text" name="name" class="form-control" value="{{ old('name', $category->name) }}">
+            @error('name') <small class="text-danger">{{ $message }}</small> @enderror
         </div>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
+        <button class="btn btn-primary">Update</button>
     </form>
 </div>
 @endsection
