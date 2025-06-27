@@ -9,9 +9,10 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('user')->latest()->get(); // show user with order
+        $orders = \App\Models\Order::where('user_id', auth()->id())->latest()->get();
         return view('cashier.orders.index', compact('orders'));
     }
+
 
     public function adminIndex()
     {
@@ -63,5 +64,10 @@ class OrderController extends Controller
     {
         $order->delete();
         return redirect()->route('orders.index')->with('success', 'Order deleted successfully.');
+    }
+
+    public function receipt(Order $order)
+    {
+        return view('cashier.orders.receipt', compact('order'));
     }
 }
