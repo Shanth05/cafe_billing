@@ -2,14 +2,16 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="mb-4 text-primary">User Role Management</h2>
+    <h2 class="mb-4 text-primary">User Management</h2>
 
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ route('admin.users.create') }}" class="btn btn-success">Add User</a>
+    </div>
+
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
@@ -18,7 +20,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Current Role</th>
-                    <th>Change Role</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,17 +33,13 @@
                             {{ $user->getRoleNames()->implode(', ') ?: 'No Role' }}
                         </span>
                     </td>
-                    <td>
-                        <form action="{{ route('admin.users.updateRole', $user) }}" method="POST" class="d-flex gap-2 align-items-center">
+                    <td class="d-flex gap-2">
+                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
                             @csrf
-                            <select name="role" class="form-select form-select-sm w-auto">
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
-                                        {{ ucfirst($role->name) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            @method('DELETE')
+                            <button class="btn btn-sm btn-danger">Delete</button>
                         </form>
                     </td>
                 </tr>
