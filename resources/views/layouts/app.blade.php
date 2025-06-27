@@ -90,5 +90,21 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const alert = document.querySelector('.alert-success');
+        if (alert) {
+            setTimeout(() => {
+                // Fade out the alert smoothly
+                alert.classList.add('fade');
+                alert.classList.remove('show');
+
+                // Remove from DOM after transition (Bootstrap default 150ms)
+                setTimeout(() => alert.remove(), 150);
+            }, 1000); // 1000ms = 1 second
+        }
+    });
+</script>
+
 </body>
 </html>
