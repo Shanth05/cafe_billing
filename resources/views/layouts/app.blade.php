@@ -35,7 +35,7 @@
                     </a>
                 </li>
 
-                <!-- Collapsible Menu: Master Data -->
+                <!-- Admin & Manager: Master Data -->
                 @if (auth()->user()->hasAnyRole(['admin', 'manager']))
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#masterMenu" role="button" aria-expanded="false" aria-controls="masterMenu">
@@ -58,8 +58,9 @@
                     </div>
                 </li>
                 @endif
-                
-                @if(auth()->user()->hasRole('admin'))
+
+                <!-- Admin: View Orders -->
+                @if (auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.orders.index') }}">
                         <i class="bi bi-card-list"></i> View Orders
@@ -67,7 +68,7 @@
                 </li>
                 @endif
 
-                <!-- Admin Only -->
+                <!-- Admin: User Management -->
                 @if (auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.users.index') }}">
@@ -76,11 +77,16 @@
                 </li>
                 @endif
 
-                <!-- Cashier: Order Processing -->
+                <!-- Cashier: POS & Orders -->
                 @if (auth()->user()->hasRole('cashier'))
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('orders.create') }}">
-                        <i class="bi bi-cart-fill me-1"></i> Create Order
+                    <a class="nav-link" href="{{ route('cashier.pos') }}">
+                        <i class="bi bi-cart-check-fill me-1"></i> POS
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('cashier.orders') }}">
+                        <i class="bi bi-receipt me-1"></i> View Orders
                     </a>
                 </li>
                 @endif
@@ -109,14 +115,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        window.addEventListener('DOMContentLoaded', (event) => {
+        window.addEventListener('DOMContentLoaded', () => {
             const alert = document.querySelector('.alert-success');
             if (alert) {
                 setTimeout(() => {
                     alert.classList.add('fade');
                     alert.classList.remove('show');
-                    setTimeout(() => alert.remove(), 150);
-                }, 1000);
+                    setTimeout(() => alert.remove(), 300);
+                }, 2000);
             }
         });
     </script>
