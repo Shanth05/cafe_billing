@@ -8,7 +8,6 @@
         <table class="table table-bordered table-hover">
             <thead class="table-primary">
                 <tr>
-                    <th>#</th>
                     <th>Customer</th>
                     <th>Item</th>
                     <th>Qty</th>
@@ -19,7 +18,6 @@
             <tbody>
                 @forelse($orders as $order)
                     <tr>
-                        <td>{{ $order->id }}</td>
                         <td>{{ $order->customer_name }}</td>
                         <td>{{ $order->item }}</td>
                         <td>{{ $order->quantity }}</td>
