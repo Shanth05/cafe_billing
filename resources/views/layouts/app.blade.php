@@ -22,7 +22,6 @@
     </style>
 </head>
 <body>
-
     <!-- Sidebar -->
     <div class="sidebar p-3">
         <h4 class="text-center"><i class="bi bi-cup-hot-fill text-danger"></i> Cafe Billing</h4>
@@ -31,12 +30,13 @@
             <ul class="nav flex-column">
                 <!-- Dashboard -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('dashboard') }}">
+                    <a class="nav-link" href="{{ route(auth()->user()->hasRole('admin') ? 'admin.dashboard' : (auth()->user()->hasRole('manager') ? 'manager.dashboard' : 'cashier.dashboard')) }}">
                         <i class="bi bi-house-door-fill me-1"></i> Dashboard
                     </a>
                 </li>
 
                 <!-- Collapsible Menu: Master Data -->
+                @if (auth()->user()->hasAnyRole(['admin', 'manager']))
                 <li class="nav-item">
                     <a class="nav-link" data-bs-toggle="collapse" href="#masterMenu" role="button" aria-expanded="false" aria-controls="masterMenu">
                         <i class="bi bi-folder-fill me-1"></i> Master Data
@@ -57,12 +57,22 @@
                         </ul>
                     </div>
                 </li>
+                @endif
 
                 <!-- Admin Only -->
                 @if (auth()->user()->hasRole('admin'))
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('admin.users.index') }}">
                         <i class="bi bi-people-fill me-1"></i> User Management
+                    </a>
+                </li>
+                @endif
+
+                <!-- Cashier: Order Processing -->
+                @if (auth()->user()->hasRole('cashier'))
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('orders.create') }}">
+                        <i class="bi bi-cart-fill me-1"></i> Create Order
                     </a>
                 </li>
                 @endif
@@ -91,20 +101,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    window.addEventListener('DOMContentLoaded', (event) => {
-        const alert = document.querySelector('.alert-success');
-        if (alert) {
-            setTimeout(() => {
-                // Fade out the alert smoothly
-                alert.classList.add('fade');
-                alert.classList.remove('show');
-
-                // Remove from DOM after transition (Bootstrap default 150ms)
-                setTimeout(() => alert.remove(), 150);
-            }, 1000); // 1000ms = 1 second
-        }
-    });
-</script>
-
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const alert = document.querySelector('.alert-success');
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.add('fade');
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 150);
+                }, 1000);
+            }
+        });
+    </script>
 </body>
 </html>
