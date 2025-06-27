@@ -58,6 +58,14 @@
                     </div>
                 </li>
                 @endif
+                
+                @if(auth()->user()->hasRole('admin'))
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.orders.index') }}">
+                        <i class="bi bi-card-list"></i> View Orders
+                    </a>
+                </li>
+                @endif
 
                 <!-- Admin Only -->
                 @if (auth()->user()->hasRole('admin'))
