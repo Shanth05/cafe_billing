@@ -9,8 +9,14 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::latest()->get();
+        $orders = Order::with('user')->latest()->get(); // show user with order
         return view('cashier.orders.index', compact('orders'));
+    }
+
+    public function adminIndex()
+    {
+        $orders = Order::with('user')->latest()->get();
+        return view('admin.orders.index', compact('orders'));
     }
 
     public function create()
@@ -20,14 +26,16 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'customer_name' => 'required',
-            'item' => 'required',
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'item' => 'required|string|max:255',
             'quantity' => 'required|integer|min:1',
             'total' => 'required|numeric|min:0',
         ]);
 
-        Order::create($request->all());
+        $validated['user_id'] = auth()->id(); // ✅ store logged-in user ID
+
+        Order::create($validated);
 
         return redirect()->route('orders.index')->with('success', 'Order created successfully.');
     }
@@ -39,14 +47,14 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
-        $request->validate([
-            'customer_name' => 'required',
-            'item' => 'required',
+        $validated = $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'item' => 'required|string|max:255',
             'quantity' => 'required|integer|min:1',
             'total' => 'required|numeric|min:0',
         ]);
 
-        $order->update($request->all());
+        $order->update($validated);
 
         return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
     }
