@@ -65,14 +65,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::delete('orders/{order}', [AdminOrderController::class, 'destroy'])->name('admin.orders.destroy');
 });
 
-// Cashier order routes (create, store, index)
-Route::middleware(['auth', 'verified', 'role:cashier'])->group(function () {
+// Cashier routes with prefix and name prefix "cashier."
+Route::middleware(['auth', 'verified', 'role:cashier'])->prefix('cashier')->name('cashier.')->group(function () {
+    // Orders routes
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders');  // cashier.orders
+    Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->name('orders.receipt');
 
-    // Receipt route under cashier prefix and route name
-    Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->name('cashier.orders.receipt');
+    // POS routes
+    Route::get('/pos', [POSController::class, 'index'])->name('pos');
+    Route::post('/pos/add-to-cart', [POSController::class, 'addToCart'])->name('pos.add');
+    Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('pos.checkout');
 });
 
 // Orders resource routes accessible to authenticated users except cashier-only create/store/index
@@ -80,16 +84,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('orders', OrderController::class)->except(['create', 'store', 'index']);
 });
 
-// Cashier POS routes with prefix 'cashier'
-Route::middleware(['auth', 'role:cashier'])->prefix('cashier')->group(function () {
-    Route::get('/pos', [POSController::class, 'index'])->name('cashier.pos');
-    Route::post('/pos/add-to-cart', [POSController::class, 'addToCart'])->name('cashier.pos.add');
-    Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('cashier.pos.checkout');
-
-    // List orders for cashier
-    Route::get('/orders', [OrderController::class, 'index'])->name('cashier.orders');
-});
-
+// Reports routes
 Route::prefix('reports')->group(function () {
     Route::get('/daily', [ReportController::class, 'dailyReport'])->name('reports.daily');
     Route::get('/monthly', [ReportController::class, 'monthlyReport'])->name('reports.monthly');
