@@ -14,6 +14,16 @@
         .sidebar {
             width: 250px;
             background-color: #f8f9fa;
+            display: flex; /* Add flex to sidebar */
+            flex-direction: column; /* Stack items vertically */
+            min-height: 100vh; /* Full viewport height */
+        }
+        .sidebar .nav {
+            flex-grow: 1; /* Allow nav to take available space */
+        }
+        .sidebar .logout-item {
+            margin-top: auto; /* Push logout to bottom */
+            padding: 1rem; /* Consistent padding */
         }
         .content {
             flex: 1;
@@ -92,7 +102,7 @@
                 @endif
 
                 <!-- Logout -->
-                <li class="nav-item mt-3">
+                <li class="nav-item logout-item">
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-outline-danger w-100">
