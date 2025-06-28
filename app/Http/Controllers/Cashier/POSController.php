@@ -40,35 +40,50 @@ class POSController extends Controller
     public function checkout(Request $request)
     {
         $cart = session('cart', []);
-        if (empty($cart)) {
-            return back()->with('error', 'Cart is empty.');
+        if (!$cart) {
+            return redirect()->back()->withErrors('Cart is empty');
         }
 
-        $lastOrder = Order::orderBy('id', 'desc')->first();
-        $invoiceNumber = $lastOrder ? ($lastOrder->id + 1000) : 1000;
-
-        $total = array_sum(array_map(function ($item) {
-            return $item['price'] * $item['quantity'];
-        }, $cart));
-
-        // Create the order
-        $order = Order::create([
-            'invoice_number' => $invoiceNumber,
-            'total' => $total,
-            'user_id' => auth()->id(),
+        $request->validate([
+            'payment_method' => 'required|string|in:cash,card,mobile',
+            'amount_given' => 'nullable|numeric|min:0',
         ]);
 
-        // Create order items
+        $total = 0;
         foreach ($cart as $item) {
-            $order->items()->create([
-                'item' => $item['name'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'subtotal' => $item['price'] * $item['quantity'],
-            ]);
+            $total += $item['price'] * $item['quantity'];
         }
 
+        $amountGiven = $request->input('amount_given', 0);
+        $paymentMethod = $request->input('payment_method');
+
+        $balance = 0;
+        if ($paymentMethod === 'cash') {
+            $balance = max(0, $amountGiven - $total);
+        }
+
+        // Generate invoice number starting at 1000
+        $lastOrder = Order::orderByDesc('id')->first();
+        if ($lastOrder && is_numeric($lastOrder->invoice_number)) {
+            $newInvoiceNumber = intval($lastOrder->invoice_number) + 1;
+        } else {
+            $newInvoiceNumber = 1000;
+        }
+
+        $order = Order::create([
+            'user_id' => auth()->id(),
+            'total' => $total,
+            'payment_method' => $paymentMethod,
+            'amount_given' => $amountGiven,
+            'balance' => $balance,
+            'invoice_number' => $newInvoiceNumber,
+            // other fields...
+        ]);
+
+        // Save order items here...
+
         session()->forget('cart');
-        return back()->with('success', 'Order placed successfully! Invoice No: ' . $invoiceNumber);
+
+        return redirect()->route('cashier.orders.receipt', $order)->with('success', 'Order completed successfully!');
     }
 }
