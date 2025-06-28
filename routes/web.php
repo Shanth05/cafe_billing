@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Cashier\POSController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReportController;
 
 // Home / welcome
 Route::get('/', function () {
@@ -56,25 +58,41 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::resource('users', UserController::class)->names('admin.users');
     Route::post('users/{user}/role', [UserController::class, 'updateRole'])->name('admin.users.updateRole');
+
+    // Admin orders management
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+    Route::post('orders/{order}', [AdminOrderController::class, 'update'])->name('admin.orders.update');
+    Route::delete('orders/{order}', [AdminOrderController::class, 'destroy'])->name('admin.orders.destroy');
 });
 
-// Cashier order routes - only cashier can create/store/index
+// Cashier order routes (create, store, index)
 Route::middleware(['auth', 'verified', 'role:cashier'])->group(function () {
     Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+
+    // Receipt route under cashier prefix and route name
+    Route::get('/orders/{order}/receipt', [OrderController::class, 'receipt'])->name('cashier.orders.receipt');
 });
 
-// Orders resource routes accessible to authenticated users (if needed)
+// Orders resource routes accessible to authenticated users except cashier-only create/store/index
 Route::middleware(['auth'])->group(function () {
     Route::resource('orders', OrderController::class)->except(['create', 'store', 'index']);
 });
 
-// Admin orders CRUD using AdminOrderController, under /admin/orders prefix
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
-    Route::post('orders/{order}', [AdminOrderController::class, 'update'])->name('admin.orders.update');
-    Route::delete('orders/{order}', [AdminOrderController::class, 'destroy'])->name('admin.orders.destroy');
+// Cashier POS routes with prefix 'cashier'
+Route::middleware(['auth', 'role:cashier'])->prefix('cashier')->group(function () {
+    Route::get('/pos', [POSController::class, 'index'])->name('cashier.pos');
+    Route::post('/pos/add-to-cart', [POSController::class, 'addToCart'])->name('cashier.pos.add');
+    Route::post('/pos/checkout', [POSController::class, 'checkout'])->name('cashier.pos.checkout');
+
+    // List orders for cashier
+    Route::get('/orders', [OrderController::class, 'index'])->name('cashier.orders');
+});
+
+Route::prefix('reports')->group(function () {
+    Route::get('/daily', [ReportController::class, 'dailyReport'])->name('reports.daily');
+    Route::get('/monthly', [ReportController::class, 'monthlyReport'])->name('reports.monthly');
 });
 
 require __DIR__.'/auth.php';
