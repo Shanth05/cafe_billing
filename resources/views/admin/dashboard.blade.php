@@ -11,8 +11,8 @@
                 <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Manage Users</a>
                 <a href="{{ route('categories.index') }}" class="btn btn-primary">Manage Categories</a>
                 <a href="{{ route('products.index') }}" class="btn btn-primary">Manage Products</a>
-                <a href="{{ route('reports.daily') }}" class="btn btn-primary">Daily Sales Report</a>
-                <a href="{{ route('reports.monthly') }}" class="btn btn-primary">Monthly Sales Report</a>
+                <a href="{{ route('reports.daily') }}" class="btn btn-success">📊 Daily Sales Report</a>
+                <a href="{{ route('reports.monthly') }}" class="btn btn-success">📈 Monthly Sales Report</a>
             </div>
         </div>
     </div>
