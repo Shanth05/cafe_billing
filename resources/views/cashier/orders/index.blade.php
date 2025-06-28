@@ -8,9 +8,7 @@
         <table class="table table-bordered table-hover">
             <thead class="table-primary">
                 <tr>
-                    <th>Customer</th>
-                    <th>Item</th>
-                    <th>Qty</th>
+                    <th>Invoice Number</th>
                     <th>Total</th>
                     <th>Created At</th>
                 </tr>
@@ -18,9 +16,7 @@
             <tbody>
                 @forelse($orders as $order)
                     <tr>
-                        <td>{{ $order->customer_name }}</td>
-                        <td>{{ $order->item }}</td>
-                        <td>{{ $order->quantity }}</td>
+                        <td>{{ $order->invoice_number }}</td>
                         <td>Rs. {{ number_format($order->total, 2) }}</td>
                         <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
                     </tr>
