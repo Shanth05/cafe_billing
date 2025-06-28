@@ -9,10 +9,9 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = \App\Models\Order::where('user_id', auth()->id())->latest()->get();
+        $orders = Order::where('user_id', auth()->id())->latest()->get();
         return view('cashier.orders.index', compact('orders'));
     }
-
 
     public function adminIndex()
     {
@@ -34,8 +33,7 @@ class OrderController extends Controller
             'total' => 'required|numeric|min:0',
         ]);
 
-        $validated['user_id'] = auth()->id(); // ✅ store logged-in user ID
-
+        $validated['user_id'] = auth()->id();
         Order::create($validated);
 
         return redirect()->route('orders.index')->with('success', 'Order created successfully.');
@@ -68,6 +66,7 @@ class OrderController extends Controller
 
     public function receipt(Order $order)
     {
-        return view('cashier.orders.receipt', compact('order'));
+        $cashierName = auth()->user()->name;
+        return view('cashier.orders.receipt', compact('order', 'cashierName'));
     }
 }
