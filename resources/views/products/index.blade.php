@@ -5,7 +5,9 @@
     <h2 class="mb-3">Products</h2>
 
     <!-- Add Button -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">+ Add Product</button>
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+    </div>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
