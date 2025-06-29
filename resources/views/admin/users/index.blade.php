@@ -5,7 +5,10 @@
     <h2 class="mb-4 text-primary">User Management</h2>
 
     @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="userSuccessAlert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     @endif
 
     <!-- Add User Button -->
@@ -147,4 +150,17 @@
     </form>
   </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const alert = document.getElementById('userSuccessAlert');
+        if (alert) {
+            setTimeout(() => {
+                // Bootstrap 5 alert close
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 1000); // 1 seconds
+        }
+    });
+</script>
+
 @endsection
