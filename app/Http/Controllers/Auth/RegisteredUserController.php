@@ -13,39 +13,36 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
-        return view('auth.register');
+        // ✅ Returns the combined login/register Blade view
+        return view('auth.login-register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
+        // ✅ Validation for registration
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // ✅ Create the user
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // ✅ Assign default role to user
-        $user->assignRole('cashier'); // Change 'cashier' to any role you want as default
+        // ✅ Assign role
+        $user->assignRole('cashier');
 
+        // ✅ Trigger Registered event (used for email verification, etc.)
         event(new Registered($user));
 
-        // Not logging in immediately
-        return redirect()->route('login')->with('status', 'Registration successful. Please login.');
+        // ✅ Redirect back to login tab with flash message
+        return redirect()->route('auth.combined', ['tab' => 'login'])
+                         ->with('status', 'Registration successful. Please login.');
     }
 }
