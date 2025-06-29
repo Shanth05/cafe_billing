@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Auth\SocialController;
 
 // Home Page
 Route::get('/', function () {
@@ -111,6 +112,9 @@ Route::middleware('guest')->get('/auth', function () {
 // Redirect default login/register routes to combined page with proper tab
 Route::get('/login', fn () => redirect()->route('auth.combined', ['tab' => 'login']))->name('login');
 Route::get('/register', fn () => redirect()->route('auth.combined', ['tab' => 'register']))->name('register');
+
+Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('social.redirect');
+Route::get('login/{provider}/callback', [SocialController::class, 'callback'])->name('social.callback');
 
 // Breeze Auth Routes for POST, password resets, email verification, etc.
 require __DIR__ . '/auth.php';
