@@ -20,7 +20,6 @@
             min-height: 100vh;
             overflow: hidden;
         }
-        /* Sidebar */
         #sidebar {
             width: 250px;
             background-color: #f8f9fa;
@@ -28,6 +27,7 @@
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
+            justify-content: space-between; /* Makes logout button stick to bottom */
         }
         #sidebar.collapsed {
             margin-left: -250px;
@@ -43,12 +43,7 @@
         #sidebar .nav .nav {
             padding-left: 1rem;
         }
-        #sidebar .logout-item {
-            margin-top: auto;
-            padding: 1rem;
-        }
 
-        /* Content */
         #content {
             flex: 1;
             overflow-y: auto;
@@ -56,7 +51,6 @@
             background: #fff;
         }
 
-        /* Topbar */
         #topbar {
             height: 56px;
             background-color: #28a745;
@@ -102,7 +96,6 @@
             left: auto;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             #sidebar {
                 position: fixed;
@@ -157,103 +150,103 @@
 
     <div id="wrapper">
         <nav id="sidebar" class="collapsed">
-            <h4 class="text-center mt-3"><i class="bi bi-cup-hot-fill text-danger"></i> Cafe Billing</h4>
-            <hr />
+            <div>
+                <h4 class="text-center mt-3"><i class="bi bi-cup-hot-fill text-danger"></i> Cafe Billing</h4>
+                <hr />
 
+                @auth
+                <ul class="nav flex-column px-2">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route(auth()->user()->hasRole('admin') ? 'admin.dashboard' : (auth()->user()->hasRole('manager') ? 'manager.dashboard' : 'cashier.dashboard')) }}">
+                            <i class="bi bi-house-door-fill me-1"></i> Dashboard
+                        </a>
+                    </li>
+
+                    @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <li class="nav-item">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manageItemsCollapse" role="button" aria-expanded="{{ request()->routeIs(['categories.*', 'products.*']) ? 'true' : 'false' }}" aria-controls="manageItemsCollapse">
+                            <span class="fw-bold">Manage Items</span>
+                            <i class="bi bi-chevron-down toggle-icon"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs(['categories.*', 'products.*']) ? 'show' : '' }}" id="manageItemsCollapse">
+                            <ul class="nav flex-column ms-3 mb-3">
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
+                                        <i class="bi bi-tags-fill me-1"></i> Categories
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                                        <i class="bi bi-box-fill me-1"></i> Products
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
+
+                    @if(auth()->user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">
+                            <i class="bi bi-card-list me-1"></i> View Orders
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
+                            <i class="bi bi-people-fill me-1"></i> User Management
+                        </a>
+                    </li>
+                    @endif
+
+                    @if(auth()->user()->hasAnyRole(['admin', 'manager']))
+                    <li class="nav-item">
+                        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportsCollapse" role="button" aria-expanded="{{ request()->routeIs(['reports.daily', 'reports.monthly']) ? 'true' : 'false' }}" aria-controls="reportsCollapse">
+                            <span class="fw-bold">Reports</span>
+                            <i class="bi bi-chevron-down toggle-icon"></i>
+                        </a>
+                        <div class="collapse {{ request()->routeIs(['reports.daily', 'reports.monthly']) ? 'show' : '' }}" id="reportsCollapse">
+                            <ul class="nav flex-column ms-3 mb-3">
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('reports.daily') ? 'active' : '' }}" href="{{ route('reports.daily') }}">
+                                        <i class="bi bi-calendar-day me-1"></i> Daily Report
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" href="{{ route('reports.monthly') }}">
+                                        <i class="bi bi-calendar-month me-1"></i> Monthly Report
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    @endif
+
+                    @if(auth()->user()->hasRole('cashier'))
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('cashier.pos') ? 'active' : '' }}" href="{{ route('cashier.pos') }}">
+                            <i class="bi bi-cart-check-fill me-1"></i> POS
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('cashier.orders') ? 'active' : '' }}" href="{{ route('cashier.orders') }}">
+                            <i class="bi bi-receipt me-1"></i> View Orders
+                        </a>
+                    </li>
+                    @endif
+                </ul>
+                @endauth
+            </div>
+
+            {{-- Logout Button at Bottom --}}
             @auth
-            <ul class="nav flex-column px-2">
-
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route(auth()->user()->hasRole('admin') ? 'admin.dashboard' : (auth()->user()->hasRole('manager') ? 'manager.dashboard' : 'cashier.dashboard')) }}">
-                        <i class="bi bi-house-door-fill me-1"></i> Dashboard
-                    </a>
-                </li>
-
-                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                <li class="nav-item">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#manageItemsCollapse" role="button" aria-expanded="{{ request()->routeIs(['categories.*', 'products.*']) ? 'true' : 'false' }}" aria-controls="manageItemsCollapse">
-                        <span class="fw-bold">Manage Items</span>
-                        <i class="bi bi-chevron-down toggle-icon"></i>
-                    </a>
-                    <div class="collapse {{ request()->routeIs(['categories.*', 'products.*']) ? 'show' : '' }}" id="manageItemsCollapse">
-                        <ul class="nav flex-column ms-3 mb-3">
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
-                                    <i class="bi bi-tags-fill me-1"></i> Categories
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
-                                    <i class="bi bi-box-fill me-1"></i> Products
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                @endif
-
-                @if(auth()->user()->hasRole('admin'))
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="{{ route('admin.orders.index') }}">
-                        <i class="bi bi-card-list me-1"></i> View Orders
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
-                        <i class="bi bi-people-fill me-1"></i> User Management
-                    </a>
-                </li>
-                @endif
-
-                @if(auth()->user()->hasAnyRole(['admin', 'manager']))
-                <li class="nav-item">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#reportsCollapse" role="button" aria-expanded="{{ request()->routeIs(['reports.daily', 'reports.monthly']) ? 'true' : 'false' }}" aria-controls="reportsCollapse">
-                        <span class="fw-bold">Reports</span>
-                        <i class="bi bi-chevron-down toggle-icon"></i>
-                    </a>
-                    <div class="collapse {{ request()->routeIs(['reports.daily', 'reports.monthly']) ? 'show' : '' }}" id="reportsCollapse">
-                        <ul class="nav flex-column ms-3 mb-3">
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('reports.daily') ? 'active' : '' }}" href="{{ route('reports.daily') }}">
-                                    <i class="bi bi-calendar-day me-1"></i> Daily Report
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link {{ request()->routeIs('reports.monthly') ? 'active' : '' }}" href="{{ route('reports.monthly') }}">
-                                    <i class="bi bi-calendar-month me-1"></i> Monthly Report
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                @endif
-
-                @if(auth()->user()->hasRole('cashier'))
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('cashier.pos') ? 'active' : '' }}" href="{{ route('cashier.pos') }}">
-                        <i class="bi bi-cart-check-fill me-1"></i> POS
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('cashier.orders') ? 'active' : '' }}" href="{{ route('cashier.orders') }}">
-                        <i class="bi bi-receipt me-1"></i> View Orders
-                    </a>
-                </li>
-                @endif
-
-                <li class="nav-item logout-item mt-auto px-2">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger w-100">
-                            <i class="bi bi-box-arrow-right me-1"></i> Logout
-                        </button>
-                    </form>
-                </li>
-            </ul>
-            @else
-            <a class="btn btn-primary w-100" href="{{ route('login') }}">
-                <i class="bi bi-box-arrow-in-right"></i> Login
-            </a>
+            <div class="px-3 pb-3">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </button>
+                </form>
+            </div>
             @endauth
         </nav>
 
@@ -272,7 +265,6 @@
                 sidebar.classList.toggle('collapsed');
             });
 
-            // Optionally: keep sidebar open on desktop and only toggle on mobile
             const mql = window.matchMedia('(min-width: 769px)');
             function handleResize(e) {
                 if (e.matches) {
@@ -284,7 +276,6 @@
             mql.addListener(handleResize);
             handleResize(mql);
 
-            // Add event listeners for the chevron icon rotation
             const collapseElements = document.querySelectorAll('.collapse');
             collapseElements.forEach(collapseEl => {
                 collapseEl.addEventListener('show.bs.collapse', function () {
