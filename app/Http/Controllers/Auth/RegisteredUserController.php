@@ -40,12 +40,12 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // ✅ Assign default role to user
+        $user->assignRole('cashier'); // Change 'cashier' to any role you want as default
+
         event(new Registered($user));
 
-        // Do not log in the user automatically
-        // Auth::login($user);
-
-        // Redirect to login page with a success message
+        // Not logging in immediately
         return redirect()->route('login')->with('status', 'Registration successful. Please login.');
     }
 }
