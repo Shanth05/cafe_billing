@@ -1,4 +1,3 @@
-<!-- resources/views/welcome.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,19 +56,19 @@
         </p>
 
         @guest
-          <a href="{{ route('login') }}" class="btn btn-success btn-lg me-2">Get Started</a>
-          <a href="{{ route('register') }}" class="btn btn-outline-success btn-lg">Register Now</a>
+            <a href="{{ route('auth.combined', ['tab' => 'login']) }}" class="btn btn-success btn-lg me-2">Get Started</a>
+            <a href="{{ route('auth.combined', ['tab' => 'register']) }}" class="btn btn-outline-success btn-lg">Register Now</a>
         @else
-          @php $user = Auth::user(); @endphp
-          @if($user->hasRole('admin'))
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-success btn-lg me-2">Go to Admin Dashboard</a>
-          @elseif($user->hasRole('manager'))
-            <a href="{{ route('manager.dashboard') }}" class="btn btn-success btn-lg me-2">Go to Manager Dashboard</a>
-          @elseif($user->hasRole('cashier'))
-            <a href="{{ route('cashier.dashboard') }}" class="btn btn-success btn-lg me-2">Go to Cashier Dashboard</a>
-          @else
-            <a href="{{ route('dashboard') }}" class="btn btn-success btn-lg me-2">Go to Dashboard</a>
-          @endif
+            @php $user = Auth::user(); @endphp
+            @if($user->hasRole('admin'))
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-success btn-lg me-2">Go to Admin Dashboard</a>
+            @elseif($user->hasRole('manager'))
+                <a href="{{ route('manager.dashboard') }}" class="btn btn-success btn-lg me-2">Go to Manager Dashboard</a>
+            @elseif($user->hasRole('cashier'))
+                <a href="{{ route('cashier.dashboard') }}" class="btn btn-success btn-lg me-2">Go to Cashier Dashboard</a>
+            @else
+                <a href="{{ route('dashboard') }}" class="btn btn-success btn-lg me-2">Go to Dashboard</a>
+            @endif
         @endguest
 
       </div>
